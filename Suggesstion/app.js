@@ -6,8 +6,8 @@ const APPSCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzgM35eqFYvWPTcSo
 const f = document.getElementById('f');
 f.addEventListener('input', function(e) {
     if ((e.target.tagName === 'INPUT' && e.target.type === 'text') || e.target.tagName === 'TEXTAREA') {
-        if (e.target.value.includes(',')) {
-            e.target.value = e.target.value.replace(/,/g, '');
+        if (/[,\r\n"']/.test(e.target.value)) {
+            e.target.value = e.target.value.replace(/[,\r\n"']/g, '');
         }
     }
 });      
