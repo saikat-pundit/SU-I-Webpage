@@ -1332,8 +1332,8 @@ window.addEventListener('load', function() {
         });
         formElement.addEventListener('input', function(e) {
             if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT') {
-                if (/[\r\n"]/.test(e.target.value)) {
-                    e.target.value = e.target.value.replace(/[\r\n"]+/g, ' ');
+                if (/[\r\n"']/.test(e.target.value)) {
+                    e.target.value = e.target.value.replace(/[\r\n"']+/g, ' ');
                 }
             }
         });
