@@ -1,0 +1,123 @@
+<div id="recaptcha-overlay">
+        <div class="recaptcha-box">
+            <i class="fa fa-shield security-icon"></i>
+            <h2>Security Verification</h2>
+            <p>Please verify you are human to access</p>
+            <div class="g-recaptcha" data-sitekey="6LdXzMQtAAAAAHLIauBimz8vtTaHNGUv1Rb4z6uR" data-callback="onCaptchaSuccess"></div>
+        </div>
+    </div>
+    <div id="portal-content" style="display: none;">
+        <div class="form-header">
+        <video src="https://cdnl.iconscout.com/lottie/premium/preview-watermark/form-filling-animation-gif-download-4922930.mp4" autoplay loop muted playsinline class="header-icon"></video>
+        <h2>Grievances and Good Practices Reporting</h2>
+    </div>
+  	<!-- HERO IMAGE GALLERY -->
+    <div id="hero-gallery"></div>
+    <!-- STATS SECTION -->
+    <div class="stats-container" id="stats-container" style="position: relative;">
+        <!-- Left Side: Grievances -->
+        <div class="stats-column stats-column-gr">
+            <h3 class="stats-header stats-header-gr"><i class="fa fa-exclamation-circle"></i> Grievances</h3>
+            <div class="stats-row">
+                <span class="stats-label">Reported</span>
+                <span class="stats-value" id="stat-gr-total">--</span>
+            </div>
+            <div class="stats-row">
+                <span class="stats-label">Last 7 Days</span>
+                <span class="stats-value" id="stat-gr-7days">--</span>
+            </div>
+            <div class="stats-row">
+                <span class="stats-label">Closed</span>
+                <span class="stats-value" id="stat-gr-closed">--</span>
+            </div>
+        </div>
+        <div class="stats-divider"></div>
+        <!-- Right Side: Good Practices -->
+        <div class="stats-column stats-column-gp">
+            <h3 class="stats-header stats-header-gp"><i class="fa fa-star"></i> Good Practices</h3>
+            <div class="stats-row">
+                <span class="stats-label">Reported</span>
+                <span class="stats-value" id="stat-gp-total">--</span>
+            </div>
+            <div class="stats-row">
+                <span class="stats-label">Last 7 Days</span>
+                <span class="stats-value" id="stat-gp-7days">--</span>
+            </div>
+            <div class="stats-row" id="top-schools-row">
+                <span class="stats-label">Top 5 Active</span>
+                <span class="stats-value" id="stat-gp-top5">--</span>
+            </div>
+        </div>
+        <button id="stats-refresh-btn" style="position: absolute; bottom: 0px; right: 0px; background: none; border: none; cursor: pointer; color: #888; font-size: 1.2rem; transition: color 0.2s;" title="Refresh Data">
+            <i class="fa fa-refresh"></i>
+        </button>
+    </div>
+    <form id="f">
+        <div id="video-bg-container">
+            <video id="bg-video" autoplay loop muted playsinline></video>
+        </div>
+        
+        <div id="form-content-wrapper">
+            <label>What do you like to report?
+                <select id="type" disabled>
+                    <option value="">Loading....</option>
+                </select>
+            </label>
+            <div id="fields"></div>
+            <button type="submit" id="submitBtn" style="display:none;">Submit</button>
+        </div>
+
+        <div id="loading-indicator" class="overlay-modal">
+            <video src="https://cdnl.iconscout.com/lottie/premium/thumb/hourglass-animation-gif-download-4347849.mp4" autoplay loop muted playsinline class="modal-video"></video>
+            <p class="modal-text">Connecting to Server ....</p>
+        </div>
+    </form>
+    <div id="search-container">
+        <h3>Grievances Record Search</h3>
+        <div class="search-bar-wrapper">
+            <input type="text" id="search-input" placeholder="Search By UDISE CODE / Record no.">
+            <button type="button" id="search-btn">
+                <i class="fa fa-search" style="font-size: 1.5em;"></i>
+            </button>
+        </div>
+        <div id="search-results"></div>
+    </div>
+    <div id="glimpses-container">
+        <h3>Glimpses of Good Practices</h3>
+        <div class="marquee-wrapper" id="wrapper-1" style="margin-bottom: 20px;">
+            <div class="marquee-content" id="marquee-content-1"></div>
+        </div>
+        <div class="marquee-wrapper" id="wrapper-2">
+            <div class="marquee-content" id="marquee-content-2"></div>
+        </div>
+    </div>
+  <!-- MEDIA DOWNLOAD CONTAINER -->
+    <div id="media-download-container">
+        <h3>Category-wise Media Download</h3>
+        <div class="media-select-wrapper">
+            <select id="media-category-select" class="media-select">
+                <option value="">-- Fetching categories... --</option>
+            </select>
+        </div>
+    </div>
+    <div id="edit-modal">
+        <div class="edit-modal-content">
+            <h3 id="edit-modal-title">Edit Record</h3>
+            <form id="edit-form">
+                <input type="hidden" id="edit-row-id">
+                <input type="hidden" id="edit-col-idx">
+                <div id="edit-modal-fields"></div>
+                <div class="edit-modal-actions">
+                    <button type="button" id="edit-cancel-btn">Cancel</button>
+                    <button type="submit" id="edit-submit-btn">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <br><br>
+    <div id="submission-modal" class="overlay-modal">
+        <video src="https://cdnl.iconscout.com/lottie/premium/thumb/hourglass-animation-gif-download-4347849.mp4" autoplay loop muted playsinline class="modal-video"></video>
+        <p class="sub-modal-title">Uploading & Saving Data...</p>
+        <p class="sub-modal-text">Please wait, estimated time: <span id="countdown-timer">60</span>s</p>
+    </div>
+  </div>
