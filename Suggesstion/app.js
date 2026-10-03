@@ -1329,14 +1329,7 @@ window.addEventListener('load', function() {
             if (e.key === 'Enter' && (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT')) {
                 e.preventDefault();
             }
-        });
-        formElement.addEventListener('input', function(e) {
-            if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT') {
-                if (/[\r\n"']/.test(e.target.value)) {
-                    e.target.value = e.target.value.replace(/[\r\n"']+/g, '');
-                }
-            }
-        });
+        });        
     }
 });
 setInterval(() => {
