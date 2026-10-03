@@ -7,8 +7,14 @@ const f = document.getElementById('f');
 f.addEventListener('input', function(e) {
     if ((e.target.tagName === 'INPUT' && e.target.type === 'text') || e.target.tagName === 'TEXTAREA') {
         if (/[,\r\n"']/.test(e.target.value)) {
-            e.target.value = e.target.value.replace(/[,\r\n"']/g, '');
+            // The '+' removes multiple restricted characters at once for better performance
+            e.target.value = e.target.value.replace(/[,\r\n"']+/g, ''); 
         }
+    }
+});
+f.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && (e.target.tagName === 'TEXTAREA' || (e.target.tagName === 'INPUT' && e.target.type === 'text'))) {
+        e.preventDefault();
     }
 });      
 const fields = document.getElementById('fields');
@@ -1323,14 +1329,6 @@ window.addEventListener('load', function() {
         }
         this.value = ""; 
     });
-    const formElement = document.getElementById('f');
-    if (formElement) {
-        formElement.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter' && (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT')) {
-                e.preventDefault();
-            }
-        });        
-    }
 });
 setInterval(() => {
     const currentNow = new Date();
