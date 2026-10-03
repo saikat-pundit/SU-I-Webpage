@@ -7,7 +7,6 @@ const f = document.getElementById('f');
 f.addEventListener('input', function(e) {
     if ((e.target.tagName === 'INPUT' && e.target.type === 'text') || e.target.tagName === 'TEXTAREA') {
         if (/[,\r\n"']/.test(e.target.value)) {
-            // The '+' removes multiple restricted characters at once for better performance
             e.target.value = e.target.value.replace(/[,\r\n"']+/g, ''); 
         }
     }
