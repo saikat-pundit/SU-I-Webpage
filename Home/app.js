@@ -202,7 +202,7 @@ document.getElementById('logoBtn').addEventListener('click', async () => {
     document.getElementById('dtContainer').classList.add('active');
     document.getElementById('dtContainer').scrollIntoView({behavior:'smooth'});
     try {
-        let r = await fetch('https://cdn.jsdelivr.net/gh/saikat-pundit/watchlists@main/Data/Yandex%20Drive%20Office.csv');
+        let r = await fetch('https://raw.githubusercontent.com/saikat-pundit/watchlists/refs/heads/main/Data/Yandex%20Drive%20Office.csv');
         let txt = await r.text(), rows = txt.split('\n').filter(r=>r.trim()!=='');
         let h = rows[0].split(','), dr = rows.slice(1).map(r=>r.split(',')).sort((a,b)=>new Date(b[2])-new Date(a[2]));
         document.getElementById('loadingInd').style.display = 'none';
