@@ -78,7 +78,7 @@
       if (dayShift > 0) istDay = (day + 1) % 7;
       if (dayShift < 0) istDay = (day + 6) % 7;
       var isWeekday = istDay >= 1 && istDay <= 5;
-      var isTimeOk = (istHour > 7 || (istHour === 7 && istMinute >= 59)) &&
+      var isTimeOk = (istHour > 9 || (istHour === 9 && istMinute >= 59)) &&
                      (istHour < 17 || (istHour === 17 && istMinute <= 1));
       return isWeekday && isTimeOk;
     }
