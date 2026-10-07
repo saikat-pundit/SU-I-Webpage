@@ -1,0 +1,87 @@
+<div id="loadingOverlay">
+  <div class="spinner"></div>
+  <p class="loading-text">Recording your request...</p>
+</div>
+  <div id="timeWarningBox">
+    <div class="time-warning-content">
+      <i class="fa fa-clock"></i>
+      <h2>Service Unavailable</h2>
+      <p>Payslip request is accepted only between <strong>10:00 AM and 5:00 PM IST</strong> on weekdays (Monday&ndash;Friday).</p>
+      <button id="timeWarningOkBtn">OK</button>
+    </div>
+  </div>
+
+  <div id="recaptcha-overlay">
+    <div class="recaptcha-box">
+      <i class="fa fa-shield security-icon"></i>
+      <h2>Security Verification</h2>
+      <p>Please verify you are human to access</p>
+      <div class="g-recaptcha" data-sitekey="6LdXzMQtAAAAAHLIauBimz8vtTaHNGUv1Rb4z6uR" data-callback="onCaptchaSuccess"></div>
+    </div>
+  </div>
+
+  <div class="post-outer-container" id="mainContent">
+    <h3 class="post-title entry-title">
+      <a href="https://sadarurban1circlepurbaburdwan.blogspot.com/2025/04/blog-post.html" class="title-link">
+        <i class="fa fa-arrow-circle-left"></i>
+      </a>
+      <a href="https://sadarurban1circlepurbaburdwan.blogspot.com/2025/04/blog-post.html" class="title-link">
+        <span class="fa fa-home"></span>
+      </a>
+      <span class="title-text">| Get Pay Slip at Email</span>
+    </h3>
+    <br><br>
+
+    <form id="GetPayslipAtEmail"
+          action="https://script.google.com/macros/s/AKfycbwwwoy5YW_XMeSJefgwrkJ7T3Ho45Ujl83S9CdJNO_YClr1XEwS3PJewdrG-IuDlD8m/exec"
+          method="post"
+          target="hidden_iframe">
+      <br>
+      <label for="name" class="field-label"><i class="fa fa-user"></i> Teacher Name:</label>
+      <input type="text" id="name" name="name" required><br><br>
+
+      <label for="schoolName" class="field-label"><i class="fa fa-school"></i> Present School Name:</label>
+      <select id="schoolName" name="schoolName" required></select>
+      <br><br>
+
+      <label for="monthsOfPaySlip" class="field-label"><i class="fa fa-hashtag"></i> How many months of pay slip do you need?</label>
+      <div class="stepper-container">
+        <div class="stepper" id="stepperContainer"></div>
+        <input type="hidden" id="monthsOfPaySlip" name="monthsOfPaySlip" required>
+        <div id="stepper-warning" class="warning-text">Please select the number of months.</div>
+      </div>
+      <br>
+
+      <label for="teacherID" class="field-label"><i class="fa fa-id-badge"></i> Teacher ID:</label>
+      <input type="text" id="teacherID" name="teacherID" required><br>
+      <span id="teacherIDWarning" class="teacherid-warning">Please enter 8 characters: first 4 should be alphabets and the next 4 should be digits.</span><br>
+
+      <label for="dateOfBirth" class="field-label"><i class="fa fa-calendar"></i> Date of Birth:</label>
+      <input type="text" id="dateOfBirth" name="dateOfBirth" required><br><br>
+
+      <label for="email" class="email-label"><i class="fa fa-envelope"></i> Email Address:</label>
+      <input type="email" id="email" name="email" required class="email-input">
+      <span id="emailWarning" class="warning-text">Invalid Email Address.</span><br><br>
+
+      <div class="btn-row">
+  		<button type="submit"><i class="fa fa-paper-plane"></i> Submit</button>
+  		<button type="reset"><i class="fa fa-rotate-left"></i> Reset</button>
+	</div><br><br>
+
+      <a href="https://sadarurban1circlepurbaburdwan.blogspot.com/2025/01/suggestion-feedback.html" class="home-link"><i class="fa fa-pen"></i> Write Suggestion / Feedback <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i></a>
+
+      <div class="scrolling-text-container">
+        <div class="scrolling-text">Your payslip will be delivered to email-inbox/spam folder within 48 hours after verifying Teacher ID and Date of Birth.</div>
+      </div>
+    </form>
+    <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
+    <div id="dobPopup" class="popup-container">
+      <div class="popup-content">
+        <img src="https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExYXJhNWlrN2w2Y3pkMjR6eTRkNGIxOTJkODd0dnk2MDZtNDRueHpmcyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/e24cBtLmvCHlP3EVbv/giphy.gif" alt="Instructions GIF">
+        <div id="flatpickrContainer"></div>
+      </div>
+    </div>
+    <table id="statsTable">
+      <tr><th colspan="2"><i class="fa fa-chart-line"></i> STATS. <i class="fa fa-chart-bar"></i></th></tr>
+    </table>
+  </div>
