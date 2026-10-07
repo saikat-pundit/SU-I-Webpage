@@ -1,0 +1,67 @@
+.post-outer-container { width: 100% !important; max-width: 100% !important; margin: 0 auto !important; padding: 0 !important; background: transparent !important; border: none !important; box-shadow: none !important; }
+
+    h3 { font-weight: bold; color: black; text-align: center; }
+    h2 { color: #333; margin-bottom: 20px; text-align: center; }
+    label { display: block; margin-bottom: 5px; color: black; }
+
+    form { background-color: transparent !important; padding: 30px; border-radius: 0; box-shadow: none !important; margin: 0 auto; max-width: 500px; border: none !important; }
+
+    input[type="text"], input[type="number"], input[type="date"], input[type="email"], select {
+      width: 325px; padding: 8px; border: 1px solid #ccc; border-radius: 3px; margin-bottom: 10px; color: black;     }
+
+    button { padding: 10px 20px; border: none; border-radius: 3px; cursor: pointer; font-weight: bold; font-size: 16px; transition: all 0.3s ease; }
+    button[type="submit"] { background-color: #4CAF50; color: white; }
+    button[type="submit"]:hover, button[type="submit"]:active { transform: scale(1.05); }
+    button[type="reset"] { background-color: #f44336; color: white; }
+    button[type="reset"]:hover, button[type="reset"]:active { transform: scale(1.05); }
+
+    @keyframes flash { 0% { color: red; } 25% { color: green; } 50% { color: blue; } 75% { color: black; } 100% { color: red; } }
+    .flashing-text { font-weight: bold; animation: flash 2s infinite; text-align: center; }
+    .scrolling-text-container { width: 100%; overflow: hidden; position: relative; white-space: nowrap; background-color: #c7f2c200; }
+    .scrolling-text { display: inline-block; animation: scroll 13s linear infinite; font-size: 20px; font-weight: bold; color: red; }
+    @keyframes scroll { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+    .popup-container { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.7); z-index: 1000; justify-content: center; align-items: center; }
+    .popup-content { background-color: white; padding: 10px; border-radius: 5px; text-align: center; position: relative; max-width: 90%; }
+    .popup-content img { max-width: 100%; max-height: 90%; }
+    .stepper-container { margin-top: 10px; }
+    .stepper { display: flex; gap: 10px; }
+    .step { background-color: #eee; color: #333; border-radius: 20px; padding: 8px 8px; cursor: pointer; font-weight: bold; transition: background-color 0.3s ease, color 0.3s ease; }
+    .step.selected { background-color: #2196F3; color: white; }
+    #recaptcha-overlay { position: fixed; inset: 0; background: radial-gradient(circle at 50% 40%, rgba(255, 153, 51, 0.18), rgba(0, 0, 0, 0.94) 70%); z-index: 9999; display: none; justify-content: center; align-items: center; backdrop-filter: blur(6px); font-family: 'Segoe UI', Roboto, sans-serif; }
+	.recaptcha-box { background: linear-gradient(145deg, #ffffff 0%, #fff7ed 100%); padding: 2.5rem 2rem; border-radius: 16px; border: 1px solid rgba(255, 153, 51, 0.35); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 153, 51, 0.15), 0 0 30px rgba(255, 153, 51, 0.25); text-align: center; max-width: 400px; width: 90%; }
+    .recaptcha-box h2 { font-weight: 600; font-size: 1.6rem; color: #b45309; margin: 0 0 0.25rem; letter-spacing: -0.01em; }
+	.recaptcha-box p { color: #78716c; font-size: 0.95rem; margin-bottom: 1.8rem; }
+    .security-icon { font-size: 3rem; color: #ff9933; margin-bottom: 1rem; display: block; text-shadow: 0 0 25px rgba(255, 153, 51, 0.45); }
+    .recaptcha-box h2 { font-weight: 600; font-size: 1.6rem; color: #1e293b; margin: 0 0 0.25rem; letter-spacing: -0.01em; }
+    .recaptcha-box p { color: #475569; font-size: 0.95rem; margin-bottom: 1.8rem; }
+    .g-recaptcha { display: flex; justify-content: center; margin: 1.5rem 0 0.5rem; }
+    table { border-collapse: collapse; max-width: 600px; border: 1px solid black; margin: 0 auto; background-color: #fff0; }
+    td { padding: 10px; border: 1px solid black; color: black; }
+    td:first-child { text-align: left; width: 70%; }
+    td:nth-child(2) { text-align: center; width: 30%; }
+    th { padding: 10px; text-align: center; background-color: #fff0; color: black; }
+    #timeWarningBox { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.92); z-index: 99999; display: none; justify-content: center; align-items: center; font-family: system-ui, sans-serif; }
+    .time-warning-content { background: white; border-radius: 16px; padding: 2.5rem 2rem; max-width: 420px; width: 90%; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.4); }
+    .time-warning-content i { font-size: 3.5rem; color: #f44336; margin-bottom: 1rem; }
+    .time-warning-content h2 { color: #1e293b; margin: 0 0 0.75rem; font-size: 1.5rem; }
+    .time-warning-content p { color: #475569; font-size: 1rem; margin: 0 0 1.5rem; line-height: 1.5; }
+    .time-warning-content button { background: #2196F3; color: white; padding: 12px 32px; font-size: 1rem; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; }
+    .time-warning-content button:hover { background: #1976D2; transform: none; }
+    .title-link { text-decoration: none; margin-right: 10px; display: inline-block; }
+    .title-link .fa-arrow-circle-left { font-size: 36px; vertical-align: middle; color: white; }
+    .title-link .fa-home { font-size: 24px; vertical-align: middle; color: white; }
+    .title-text { font-weight: bold; color: white; margin-left: 10px; }
+    .field-label { color: white; font-weight: bold; font-size: 1.2em; }
+    .email-label { color: red; font-weight: bold; font-size: 1.2em; }
+    .email-input { border: 2px solid red; }
+    .warning-text { color: red; display: none; }
+    .teacherid-warning { color: white; display: none; }
+    .reset-btn-spacer { display: inline-block; width: 200px; }
+    .home-link { font-weight: bold; text-decoration: underline; color: #007bff; }
+    .post-title { display: block !important; visibility: visible !important; }
+    #loadingOverlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 99998; display: none; justify-content: center; align-items: center; flex-direction: column; font-family: system-ui, sans-serif; }
+	.spinner { width: 60px; height: 60px; border: 6px solid rgba(255,255,255,0.25); border-top-color: #4CAF50; border-radius: 50%; animation: spin 0.8s linear infinite; }
+	@keyframes spin { to { transform: rotate(360deg); } }
+	.loading-text { color: white; margin-top: 18px; font-size: 1.1rem; font-weight: bold; letter-spacing: 0.5px; }
+    .btn-row { display: flex; gap: 12px; flex-wrap: nowrap; align-items: center; }
+	.btn-row button { flex: 1 1 0; min-width: 0; padding: 10px 12px; white-space: nowrap; }
