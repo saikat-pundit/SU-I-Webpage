@@ -2,36 +2,65 @@ name: Purge jsDelivr Cache
 
 on:
   schedule:
-    - cron: '0 */3 * * *'
-  workflow_dispatch:
+    # Runs at minute 0 of every hour (UTC)
+    - cron: '0 * * * *'
+  workflow_dispatch:  # allows manual trigger from Actions tab
 
 jobs:
   purge:
     runs-on: ubuntu-latest
     steps:
-      - name: Purge all CSS/HTML/JS files
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Purge jsDelivr cache for all files
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          set -e
           REPO="${{ github.repository }}"
           BRANCH="${{ github.ref_name }}"
-          FILES=$(curl -s -H "Authorization: token $GH_TOKEN" \
-            "https://api.github.com/repos/$REPO/git/trees/$BRANCH?recursive=1" \
-            | grep -oP '"path":\s*"\K[^"]+\.(css|html|js)"' | tr -d '"')
+          echo "Repo: $REPO"
+          echo "Branch: $BRANCH"
 
-          FAIL=0
+          # Get the tree of all files in the branch
+          TREE_URL="https://api.github.com/repos/${REPO}/git/trees/${BRANCH}?recursive=1"
+          echo "Fetching file list from $TREE_URL"
+
+          FILES=$(curl -s -H "Authorization: token ${GITHUB_TOKEN}" \
+                        -H "Accept: application/vnd.github.v3+json" \
+                        "$TREE_URL" \
+                  | grep -oP '"path":\s*"\K[^"]+')
+
+          # Filter to .css, .html, .js only
+          TARGETS=$(echo "$FILES" | grep -E '\.(css|html|js)$' || true)
+
+          if [ -z "$TARGETS" ]; then
+            echo "No matching files found."
+            exit 0
+          fi
+
+          echo "Files to purge:"
+          echo "$TARGETS"
+          echo "---"
+
+          # Purge each file
+          FAILED=0
           while IFS= read -r FILE; do
             [ -z "$FILE" ] && continue
-            CODE=$(curl -s -o /dev/null -w "%{http_code}" \
-              "https://purge.jsdelivr.net/gh/$REPO@$BRANCH/$FILE")
-            if [ "$CODE" = "200" ]; then
-              echo "✅ $FILE"
-            else
-              echo "❌ $FILE (HTTP $CODE)"
-              FAIL=$((FAIL+1))
+            PURGE_URL="https://purge.jsdelivr.net/gh/${REPO}@${BRANCH}/${FILE}"
+            echo "Purging: $PURGE_URL"
+            RESPONSE=$(curl -s -w "\nHTTP_STATUS:%{http_code}" "$PURGE_URL" || echo "HTTP_STATUS:000")
+            STATUS=$(echo "$RESPONSE" | grep -oP 'HTTP_STATUS:\K\d+')
+            BODY=$(echo "$RESPONSE" | sed '/HTTP_STATUS/d')
+            echo "  → HTTP $STATUS"
+            echo "  → $BODY"
+            if [ "$STATUS" != "200" ]; then
+              FAILED=$((FAILED + 1))
             fi
-          done <<< "$FILES"
+            # Small delay to avoid hammering the purge API
+            sleep 2
+          done <<< "$TARGETS"
 
           echo "---"
-          echo "Done. Failures: $FAIL"
-          [ "$FAIL" -eq 0 ]
+          echo "Purge complete. Failures: $FAILED"
