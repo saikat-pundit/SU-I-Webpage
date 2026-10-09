@@ -2,65 +2,46 @@ name: Purge jsDelivr Cache
 
 on:
   schedule:
-    # Runs at minute 0 of every hour (UTC)
-    - cron: '0 * * * *'
-  workflow_dispatch:  # allows manual trigger from Actions tab
+    - cron: '0 */3 * * *'
+  workflow_dispatch:
 
 jobs:
-  purge:
+  list-files:
     runs-on: ubuntu-latest
+    outputs:
+      files: ${{ steps.list.outputs.files }}
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
-
-      - name: Purge jsDelivr cache for all files
+      - id: list
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          set -e
-          REPO="${{ github.repository }}"
-          BRANCH="${{ github.ref_name }}"
-          echo "Repo: $REPO"
-          echo "Branch: $BRANCH"
+          FILES=$(curl -s -H "Authorization: token $GH_TOKEN" \
+            "https://api.github.com/repos/${{ github.repository }}/git/trees/${{ github.ref_name }}?recursive=1" \
+            | grep -oP '"path":\s*"\K[^"]+\.(css|html|js)"' | tr -d '"' \
+            | awk 'NF' | jq -R -s -c 'split("\n") | map(select(. != ""))')
+          echo "files=$FILES" >> "$GITHUB_OUTPUT"
 
-          # Get the tree of all files in the branch
-          TREE_URL="https://api.github.com/repos/${REPO}/git/trees/${BRANCH}?recursive=1"
-          echo "Fetching file list from $TREE_URL"
-
-          FILES=$(curl -s -H "Authorization: token ${GITHUB_TOKEN}" \
-                        -H "Accept: application/vnd.github.v3+json" \
-                        "$TREE_URL" \
-                  | grep -oP '"path":\s*"\K[^"]+')
-
-          # Filter to .css, .html, .js only
-          TARGETS=$(echo "$FILES" | grep -E '\.(css|html|js)$' || true)
-
-          if [ -z "$TARGETS" ]; then
-            echo "No matching files found."
-            exit 0
+  purge:
+    needs: list-files
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      max-parallel: 12
+      matrix:
+        file: ${{ fromJson(needs.list-files.outputs.files) }}
+    steps:
+      - name: Purge ${{ matrix.file }}
+        run: |
+          URL="https://purge.jsdelivr.net/gh/${{ github.repository }}@${{ github.ref_name }}/${{ matrix.file }}"
+          RESPONSE=$(curl -s "$URL")
+          if echo "$RESPONSE" | grep -q '"throttled":\s*false'; then
+            echo "✅ ${{ matrix.file }}"
+          elif echo "$RESPONSE" | grep -q '"throttled":\s*true'; then
+            RESET=$(echo "$RESPONSE" | grep -oP '"throttlingReset":\s*\K\d+')
+            echo "⏳ ${{ matrix.file }} (throttled, reset in ${RESET}s)"
+            exit 1
+          else
+            echo "❌ ${{ matrix.file }}"
+            echo "$RESPONSE"
+            exit 1
           fi
-
-          echo "Files to purge:"
-          echo "$TARGETS"
-          echo "---"
-
-          # Purge each file
-          FAILED=0
-          while IFS= read -r FILE; do
-            [ -z "$FILE" ] && continue
-            PURGE_URL="https://purge.jsdelivr.net/gh/${REPO}@${BRANCH}/${FILE}"
-            echo "Purging: $PURGE_URL"
-            RESPONSE=$(curl -s -w "\nHTTP_STATUS:%{http_code}" "$PURGE_URL" || echo "HTTP_STATUS:000")
-            STATUS=$(echo "$RESPONSE" | grep -oP 'HTTP_STATUS:\K\d+')
-            BODY=$(echo "$RESPONSE" | sed '/HTTP_STATUS/d')
-            echo "  → HTTP $STATUS"
-            echo "  → $BODY"
-            if [ "$STATUS" != "200" ]; then
-              FAILED=$((FAILED + 1))
-            fi
-            # Small delay to avoid hammering the purge API
-            sleep 2
-          done <<< "$TARGETS"
-
-          echo "---"
-          echo "Purge complete. Failures: $FAILED"
