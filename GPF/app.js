@@ -56,11 +56,11 @@ window.onload = function() {
 ];
 
     function trySheet(idx) {
-        if (idx >= SHEET_PROXIES.length) {
-            console.error("All sheet CSV proxies failed.");
-            loadDashboardFromGist();
-            return;
-        }
+    if (idx >= SHEET_PROXIES.length) {
+        console.error("All sheet CSV proxies failed.");
+        loadDashboardFromGist();
+        return;
+    }
         fetch(SHEET_PROXIES[idx])
             .then(function(r) {
                 if (!r.ok) throw new Error("HTTP " + r.status);
@@ -83,29 +83,38 @@ window.onload = function() {
 
     trySheet(0);
 };
-
-// ── Load dashboard from Gist (with proxy fallback) ──
 function loadDashboardFromGist() {
-    var GIST_PROXIES = [
-    GIST_CSV,
-    "https://corsproxy.io/?" + encodeURIComponent(GIST_CSV),
-    "https://api.codetabs.com/v1/proxy?quest=" + encodeURIComponent(GIST_CSV),
-    "https://thingproxy.freeboard.io/fetch/" + GIST_CSV,
-    "https://api.allorigins.win/raw?url=" + encodeURIComponent(GIST_CSV)
-];
+    // ── show spinner, hide table ──
+    var loader = document.getElementById('dashLoader');
+    var tableWrap = document.getElementById('dashTableWrap');
+    var table = document.getElementById('dashTable');
+    if (loader) loader.classList.add('active');
+    if (tableWrap) tableWrap.style.display = 'none';
+    if (table) table.style.display = 'none';
+    function hideLoader() {
+        if (loader) loader.classList.remove('active');
+    }
+    var bust = "?t=" + Date.now();
+    var bustedGist = GIST_CSV + bust;
 
+    var GIST_PROXIES = [
+        bustedGist,
+        "https://corsproxy.io/?" + encodeURIComponent(bustedGist),
+        "https://api.allorigins.win/raw?url=" + encodeURIComponent(bustedGist)
+    ];
     function tryFetch(idx) {
         if (idx >= GIST_PROXIES.length) {
             console.error("All gist proxies failed.");
             document.getElementById('dashBody').innerHTML =
                 '<tr><td colspan="99" style="text-align:center;color:red;padding:15px;font-weight:bold;">' +
                 'Dashboard data could not be loaded. Please refresh.</td></tr>';
-            document.getElementById('dashTable').style.display = 'table';
+            if (table) table.style.display = 'table';
+            if (tableWrap) tableWrap.style.display = 'block';
             document.getElementById('dashCountContainer').style.display = 'flex';
+            hideLoader();
             return;
         }
-
-        fetch(GIST_PROXIES[idx])
+        fetch(GIST_PROXIES[idx], { cache: "no-store" })
             .then(function(r) {
                 if (!r.ok) throw new Error("HTTP " + r.status);
                 return r.text();
@@ -115,6 +124,8 @@ function loadDashboardFromGist() {
                     throw new Error("Non-CSV response (likely 404 page)");
                 }
                 renderDashboard(csvText);
+                if (tableWrap) tableWrap.style.display = 'block';
+                hideLoader();
             })
             .catch(function(err) {
                 console.warn("Gist fetch attempt " + idx + " failed:", err.message);
@@ -124,8 +135,6 @@ function loadDashboardFromGist() {
 
     tryFetch(0);
 }
-
-// ── Render dashboard table ──
 function renderDashboard(csvText) {
     const gistRows = splitCsv(csvText);
     if (gistRows.length < 1) return;
