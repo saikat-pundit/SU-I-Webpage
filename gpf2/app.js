@@ -48,10 +48,12 @@ window.onload = function() {
     document.getElementById('searchValue').value = '';
 
     var SHEET_PROXIES = [
-        SHEET_CSV,
-        "https://api.allorigins.win/raw?url=" + encodeURIComponent(SHEET_CSV),
-        "https://corsproxy.io/?" + encodeURIComponent(SHEET_CSV)
-    ];
+    SHEET_CSV,
+    "https://corsproxy.io/?" + encodeURIComponent(SHEET_CSV),
+    "https://api.codetabs.com/v1/proxy?quest=" + encodeURIComponent(SHEET_CSV),
+    "https://thingproxy.freeboard.io/fetch/" + SHEET_CSV,
+    "https://api.allorigins.win/raw?url=" + encodeURIComponent(SHEET_CSV)
+];
 
     function trySheet(idx) {
         if (idx >= SHEET_PROXIES.length) {
