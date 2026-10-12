@@ -85,10 +85,12 @@ window.onload = function() {
 // ── Load dashboard from Gist (with proxy fallback) ──
 function loadDashboardFromGist() {
     var GIST_PROXIES = [
-        GIST_CSV,
-        "https://api.allorigins.win/raw?url=" + encodeURIComponent(GIST_CSV),
-        "https://corsproxy.io/?" + encodeURIComponent(GIST_CSV)
-    ];
+    GIST_CSV,
+    "https://corsproxy.io/?" + encodeURIComponent(GIST_CSV),
+    "https://api.codetabs.com/v1/proxy?quest=" + encodeURIComponent(GIST_CSV),
+    "https://thingproxy.freeboard.io/fetch/" + GIST_CSV,
+    "https://api.allorigins.win/raw?url=" + encodeURIComponent(GIST_CSV)
+];
 
     function tryFetch(idx) {
         if (idx >= GIST_PROXIES.length) {
