@@ -48,7 +48,7 @@ tr:hover td { background-color: #f1f5f9; transition: background 0.2s ease; }
 #submitContainer { display: none; margin-top: 20px; align-items: center; gap: 15px; }
 #captchaWrap { margin-top: 25px; margin-bottom: 25px; padding: 15px 0; display: flex; justify-content: center; }
 #dashCountContainer { display: none; flex-direction: column; gap: 12px; margin-bottom: 15px; }
-#dashTableWrap { overflow: auto; max-height: 65vh; border-radius: 10px; border: 1px solid #edf2f7; }
+#dashTableWrap { overflow: auto; max-height: 65vh; min-height: 60px; border-radius: 10px; border: 1px solid #edf2f7; }
 #imageModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1000; text-align: center; overflow-y: auto; }
 #imageModalInner { margin-top: 10vh; padding-bottom: 50px; }
 #imgSpinner { display: none; font-size: 50px; color: #4a90e2; margin: 20vh auto; }
