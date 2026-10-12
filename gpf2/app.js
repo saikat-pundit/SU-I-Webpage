@@ -12,13 +12,16 @@ const ID_PATTERN = /^[A-Z]{4}\d{4}$/;
 const SHEET_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTBuDewVgTDoc_zaWYQyaWKpBt0RwtFPhnBrpqr1v6Y5wfAmPpEYvTsaWd64bsHhH68iYNtLMSRpOQ0/pub?gid=0&single=true&output=csv';
 const GIST_CSV = 'https://gist.githubusercontent.com/saikat-pundit/84be0fa2560bd68f34718decaa19c781/raw/GPF.CSV';
 const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxfy_FyoIoT6iryc1LUTOoW489X3xV8ps2AsqqdiXj8mtuQYh-jeSf7_BSJLDN_QfVSEw/exec';
+
 function clean(v) { return v ? v.replace(/(^"|"$)/g, '').trim() : ''; }
 function splitCsv(text) { return text.trim().split('\n').map(r => r.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/)); }
+
 function driveToThumb(url) {
     if (!url || !url.includes("drive.google.com")) return url;
     let m = url.match(/id=([^&]+)/) || url.match(/\/d\/([^\/]+)/);
     return (m && m[1]) ? "https://drive.google.com/thumbnail?id=" + m[1] + "&sz=w1000" : url;
 }
+
 function showImageModal(url) {
     const img = document.getElementById('modalImg');
     const spin = document.getElementById('imgSpinner');
@@ -30,97 +33,159 @@ function showImageModal(url) {
     img.onload = () => { spin.style.display = 'none'; img.style.display = 'inline-block'; };
     img.src = driveToThumb(url);
 }
+
 function closeImageModal() {
     document.getElementById('imageModal').style.display = 'none';
     const img = document.getElementById('modalImg');
     img.src = '';
     img.classList.remove('zoomed-img');
 }
+
 function enlargeImage(url) { showImageModal(url); }
+
+// ── Load sheet CSV (with proxy fallback) then dashboard ──
 window.onload = function() {
     document.getElementById('searchValue').value = '';
-    fetch(SHEET_CSV)
-        .then(r => r.text())
-        .then(csvText => {
-            const rows = splitCsv(csvText);
-            headers = rows[0].slice(0, 25);
-            rowData = rows.slice(1).map(row => row.slice(0, 25));
-        })
-        .catch(err => console.error("Sheet CSV load failed:", err))
-        .finally(() => {
+
+    var SHEET_PROXIES = [
+        SHEET_CSV,
+        "https://api.allorigins.win/raw?url=" + encodeURIComponent(SHEET_CSV),
+        "https://corsproxy.io/?" + encodeURIComponent(SHEET_CSV)
+    ];
+
+    function trySheet(idx) {
+        if (idx >= SHEET_PROXIES.length) {
+            console.error("All sheet CSV proxies failed.");
             loadDashboardFromGist();
-        });
-};
-function loadDashboardFromGist() {
-    fetch(GIST_CSV + "?t=" + Date.now())
-        .then(r => r.text())
-        .then(csvText => {
-    if (!csvText || csvText.trim().startsWith("<")) {
-        console.error("Gist returned non-CSV content (likely 404). URL:", GIST_CSV);
-        document.getElementById('dashBody').innerHTML =
-            '<tr><td colspan="99" style="text-align:center;color:red;padding:15px;font-weight:bold;">Dashboard data not found.</td></tr>';
-        document.getElementById('dashTable').style.display = 'table';
-        document.getElementById('dashCountContainer').style.display = 'flex';
-        return;
+            return;
+        }
+        fetch(SHEET_PROXIES[idx])
+            .then(function(r) {
+                if (!r.ok) throw new Error("HTTP " + r.status);
+                return r.text();
+            })
+            .then(function(csvText) {
+                if (!csvText || csvText.trim().startsWith("<")) {
+                    throw new Error("Non-CSV response");
+                }
+                const rows = splitCsv(csvText);
+                headers = rows[0].slice(0, 25);
+                rowData = rows.slice(1).map(function(row) { return row.slice(0, 25); });
+                loadDashboardFromGist();
+            })
+            .catch(function(err) {
+                console.warn("Sheet fetch attempt " + idx + " failed:", err.message);
+                trySheet(idx + 1);
+            });
     }
+
+    trySheet(0);
+};
+
+// ── Load dashboard from Gist (with proxy fallback) ──
+function loadDashboardFromGist() {
+    var GIST_PROXIES = [
+        GIST_CSV,
+        "https://api.allorigins.win/raw?url=" + encodeURIComponent(GIST_CSV),
+        "https://corsproxy.io/?" + encodeURIComponent(GIST_CSV)
+    ];
+
+    function tryFetch(idx) {
+        if (idx >= GIST_PROXIES.length) {
+            console.error("All gist proxies failed.");
+            document.getElementById('dashBody').innerHTML =
+                '<tr><td colspan="99" style="text-align:center;color:red;padding:15px;font-weight:bold;">' +
+                'Dashboard data could not be loaded. Please refresh.</td></tr>';
+            document.getElementById('dashTable').style.display = 'table';
+            document.getElementById('dashCountContainer').style.display = 'flex';
+            return;
+        }
+
+        fetch(GIST_PROXIES[idx])
+            .then(function(r) {
+                if (!r.ok) throw new Error("HTTP " + r.status);
+                return r.text();
+            })
+            .then(function(csvText) {
+                if (!csvText || csvText.trim().startsWith("<")) {
+                    throw new Error("Non-CSV response (likely 404 page)");
+                }
+                renderDashboard(csvText);
+            })
+            .catch(function(err) {
+                console.warn("Gist fetch attempt " + idx + " failed:", err.message);
+                tryFetch(idx + 1);
+            });
+    }
+
+    tryFetch(0);
+}
+
+// ── Render dashboard table ──
+function renderDashboard(csvText) {
     const gistRows = splitCsv(csvText);
     if (gistRows.length < 1) return;
 
-            document.getElementById('dashHead').innerHTML =
-                "<tr>" + gistRows[0].slice(1).map(h => `<th>${clean(h)}</th>`).join("") + "</tr>";
+    const rowDataReady = Array.isArray(rowData) && rowData.length > 0;
 
-            const filterMode = document.querySelector('input[name="dashFilter"]:checked')?.value || 'all';
-            let bodyHtml = "";
-            let count = 0;
+    document.getElementById('dashHead').innerHTML =
+        "<tr>" + gistRows[0].slice(1).map(function(h) { return "<th>" + clean(h) + "</th>"; }).join("") + "</tr>";
 
-            for (let i = gistRows.length - 1; i > 0; i--) {
-                const oldGpf = clean(gistRows[i][2]);
-                const newGpf = clean(gistRows[i][3]);
-                if (filterMode === 'revised' && oldGpf === newGpf) continue;
+    const filterMode = document.querySelector('input[name="dashFilter"]:checked') ?
+                       document.querySelector('input[name="dashFilter"]:checked').value : 'all';
+    let bodyHtml = "";
+    let count = 0;
 
-                const gistCol1 = clean(gistRows[i][1]);
-                let teacherId = '';
-                for (let r = 0; r < rowData.length; r++) {
-                    if (clean(rowData[r][0]) === gistCol1) { teacherId = clean(rowData[r][1]); break; }
-                }
+    for (let i = gistRows.length - 1; i > 0; i--) {
+        const oldGpf = clean(gistRows[i][2]);
+        const newGpf = clean(gistRows[i][3]);
+        if (filterMode === 'revised' && oldGpf === newGpf) continue;
 
-                bodyHtml += "<tr>";
-                gistRows[i].forEach((cell, colIndex) => {
-                    if (colIndex === 0) return;
-                    const data = clean(cell);
-
-                    if (colIndex === 2 || colIndex === 3) {
-                        bodyHtml += isAdmin
-                            ? `<td>${data}</td>`
-                            : `<td class="maskedCell" data-real="${data}">****</td>`;
-                    } else if (colIndex === 4) {
-                        if (data && data !== 'No file') {
-                            if (isAdmin) {
-                                const thumb = driveToThumb(data);
-                                bodyHtml += `<td class="thumb-cell"><img class="thumb-img" src="${thumb}" onclick="enlargeImage('${thumb}')"></td>`;
-                            } else {
-                                bodyHtml += `<td class="thumb-cell fileCell" data-url="${data}" data-tid="${teacherId}">
-                                                <i class="fa-solid fa-eye-slash fa-eye-slash-cell" onclick="revealRow(this)"></i>
-                                             </td>`;
-                            }
-                        } else {
-                            bodyHtml += `<td>${data}</td>`;
-                        }
-                    } else {
-                        bodyHtml += `<td>${data}</td>`;
-                    }
-                });
-                bodyHtml += "</tr>";
-                count++;
+        const gistCol1 = clean(gistRows[i][1]);
+        let teacherId = '';
+        if (rowDataReady) {
+            for (let r = 0; r < rowData.length; r++) {
+                if (clean(rowData[r][0]) === gistCol1) { teacherId = clean(rowData[r][1]); break; }
             }
+        }
 
-            document.getElementById('dashBody').innerHTML = bodyHtml;
-            document.getElementById('dashTotalCount').innerText = count;
-            document.getElementById('dashCountContainer').style.display = 'flex';
-            if (count > 0) document.getElementById('dashTable').style.display = 'table';
-        })
-        .catch(err => console.error("Error loading gist for dashboard: ", err));
+        bodyHtml += "<tr>";
+        gistRows[i].forEach(function(cell, colIndex) {
+            if (colIndex === 0) return;
+            const data = clean(cell);
+
+            if (colIndex === 2 || colIndex === 3) {
+                bodyHtml += isAdmin
+                    ? "<td>" + data + "</td>"
+                    : '<td class="maskedCell" data-real="' + data + '">****</td>';
+            } else if (colIndex === 4) {
+                if (data && data !== 'No file') {
+                    if (isAdmin) {
+                        const thumb = driveToThumb(data);
+                        bodyHtml += '<td class="thumb-cell"><img class="thumb-img" src="' + thumb + '" onclick="enlargeImage(\'' + thumb + '\')"></td>';
+                    } else {
+                        bodyHtml += '<td class="thumb-cell fileCell" data-url="' + data + '" data-tid="' + teacherId + '">' +
+                                    '<i class="fa-solid fa-eye-slash fa-eye-slash-cell" onclick="revealRow(this)"></i>' +
+                                    '</td>';
+                    }
+                } else {
+                    bodyHtml += "<td>" + data + "</td>";
+                }
+            } else {
+                bodyHtml += "<td>" + data + "</td>";
+            }
+        });
+        bodyHtml += "</tr>";
+        count++;
+    }
+
+    document.getElementById('dashBody').innerHTML = bodyHtml;
+    document.getElementById('dashTotalCount').innerText = count;
+    document.getElementById('dashCountContainer').style.display = 'flex';
+    if (count > 0) document.getElementById('dashTable').style.display = 'table';
 }
+
+// ── Rest of your code (unchanged) ──
 function downloadFormatImage() {
     const url = "https://freeimghost.com/images/2026/02/23/GPF_FORMAT_page-0001.jpg";
     const a = document.createElement('a');
@@ -130,7 +195,8 @@ function downloadFormatImage() {
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
-}  
+}
+
 function revealRow(iconEl) {
     let tid = prompt("Please enter Teacher ID:");
     if (tid === null) return;
@@ -149,6 +215,7 @@ function revealRow(iconEl) {
 }
 
 function onCaptchaSuccess() { isCaptchaVerified = true; }
+
 function toggleAdmin() {
     if (isAdmin) {
         isAdmin = false;
@@ -169,6 +236,7 @@ function toggleAdmin() {
         alert("Incorrect Admin Password!");
     }
 }
+
 function searchCsv() {
     const query = document.getElementById('searchValue').value.trim().toUpperCase();
     if (!ID_PATTERN.test(query)) {
@@ -231,6 +299,7 @@ function showTab(tabId) {
     document.getElementById('btnApp').classList.toggle('active-tab', tabId === 'appTab');
     document.getElementById('btnDash').classList.toggle('active-tab', tabId === 'dashTab');
 }
+
 function toggleForm() {
     const opt = document.querySelector('input[name="gpfOpt"]:checked').value;
     document.getElementById('gpfTable').style.display = opt === 'Yes' ? 'block' : 'none';
@@ -249,7 +318,9 @@ function toggleForm() {
         badge.classList.add('deadline-passed');
     }
 }
+
 function showFormatImage() { showImageModal("https://freeimghost.com/images/2026/02/23/GPF_FORMAT_page-0001.jpg"); }
+
 function calcNetPay() {
     const revised = parseFloat(document.getElementById('revisedGpf').value);
     const warningDiv = document.getElementById('gpfSameWarning');
@@ -263,6 +334,7 @@ function calcNetPay() {
         warningDiv.style.display = 'none';
     }
 }
+
 function compressImage(event) {
     const file = event.target.files[0];
     if (!file) return;
@@ -291,6 +363,7 @@ function compressImage(event) {
     };
     reader.readAsDataURL(file);
 }
+
 function submitForm() {
     if (!isCaptchaVerified) {
         alert("Please verify that you are not a robot by checking the reCAPTCHA box.");
