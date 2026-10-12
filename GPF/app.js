@@ -43,7 +43,7 @@ function initGpfPortal() {
 
     const sv = document.getElementById('searchValue');
     if (sv) sv.value = '';
-
+    loadDashboardFromGist();
     fetch(SHEET_CSV)
         .then(r => r.text())
         .then(csvText => {
@@ -51,8 +51,8 @@ function initGpfPortal() {
             headers = rows[0].slice(0, 25);
             rowData = rows.slice(1).map(row => row.slice(0, 25));
             loadDashboardFromGist();
-        });
-
+        })
+        .catch(err => console.error("Sheet CSV failed:", err));
     function loadDashboardFromGist() {
         fetch(GIST_CSV + "?t=" + Date.now())
             .then(r => r.text())
@@ -113,7 +113,7 @@ function initGpfPortal() {
                 document.getElementById('dashBody').innerHTML = bodyHtml;
                 document.getElementById('dashTotalCount').innerText = count;
                 document.getElementById('dashCountContainer').style.display = 'flex';
-                if (count > 0) document.getElementById('dashTable').style.display = 'table';
+                document.getElementById('dashTable').style.display = count > 0 ? 'table' : 'none';
             })
             .catch(err => console.error("Error loading gist for dashboard: ", err));
     }
