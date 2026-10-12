@@ -39,21 +39,32 @@ function closeImageModal() {
 function enlargeImage(url) { showImageModal(url); }
 window.onload = function() {
     document.getElementById('searchValue').value = '';
-    loadDashboardFromGist();
+    fetch(SHEET_CSV)
+        .then(r => r.text())
+        .then(csvText => {
+            const rows = splitCsv(csvText);
+            headers = rows[0].slice(0, 25);
+            rowData = rows.slice(1).map(row => row.slice(0, 25));
+        })
+        .catch(err => console.error("Sheet CSV load failed:", err))
+        .finally(() => {
+            loadDashboardFromGist();
+        });
 };
-fetch(SHEET_CSV)
-    .then(r => r.text())
-    .then(csvText => {
-        const rows = splitCsv(csvText);
-        headers = rows[0].slice(0, 25);
-        rowData = rows.slice(1).map(row => row.slice(0, 25));
-    });
 function loadDashboardFromGist() {
     fetch(GIST_CSV + "?t=" + Date.now())
         .then(r => r.text())
         .then(csvText => {
-            const gistRows = splitCsv(csvText);
-            if (gistRows.length < 1) return;
+    if (!csvText || csvText.trim().startsWith("<")) {
+        console.error("Gist returned non-CSV content (likely 404). URL:", GIST_CSV);
+        document.getElementById('dashBody').innerHTML =
+            '<tr><td colspan="99" style="text-align:center;color:red;padding:15px;font-weight:bold;">Dashboard data not found.</td></tr>';
+        document.getElementById('dashTable').style.display = 'table';
+        document.getElementById('dashCountContainer').style.display = 'flex';
+        return;
+    }
+    const gistRows = splitCsv(csvText);
+    if (gistRows.length < 1) return;
 
             document.getElementById('dashHead').innerHTML =
                 "<tr>" + gistRows[0].slice(1).map(h => `<th>${clean(h)}</th>`).join("") + "</tr>";
