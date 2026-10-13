@@ -85,16 +85,18 @@ window.onload = function() {
 
     trySheet(0);
 };
-function loadDashboardFromGist() {
-    // ── show spinner, hide table ──
+function loadDashboardFromGist(silent) {
+    silent = silent === true;
     var loader = document.getElementById('dashLoader');
     var tableWrap = document.getElementById('dashTableWrap');
     var table = document.getElementById('dashTable');
-    if (loader) loader.classList.add('active');
-    if (tableWrap) tableWrap.style.display = 'none';
-    if (table) table.style.display = 'none';
+    if (!silent) {
+        if (loader) loader.classList.add('active');
+        if (tableWrap) tableWrap.style.display = 'none';
+        if (table) table.style.display = 'none';
+    }
     function hideLoader() {
-        if (loader) loader.classList.remove('active');
+        if (!silent && loader) loader.classList.remove('active');
     }
     var bust = "?t=" + Date.now();
     var bustedGist = GIST_CSV + bust;
@@ -313,6 +315,15 @@ function showTab(tabId) {
     document.getElementById('dashTab').style.display = tabId === 'dashTab' ? 'block' : 'none';
     document.getElementById('btnApp').classList.toggle('active-tab', tabId === 'appTab');
     document.getElementById('btnDash').classList.toggle('active-tab', tabId === 'dashTab');
+    if (tabId === 'dashTab') {
+        const table = document.getElementById('dashTable');
+        const alreadyLoaded = table && table.style.display !== 'none' && table.rows.length > 0;
+        if (alreadyLoaded) {
+            loadDashboardFromGist(true);   // silent refresh
+        } else {
+            loadDashboardFromGist(false);  // first load — show spinner
+        }
+    }
 }
 
 function toggleForm() {
@@ -487,3 +498,9 @@ function submitForm() {
             alert('Error submitting data');
         });
 }
+setInterval(function() {
+    const dashTab = document.getElementById('dashTab');
+    if (!dashTab || dashTab.style.display === 'none') return;   // app tab is open — skip
+    if (document.hidden) return;                                 // browser tab is hidden — skip
+    loadDashboardFromGist(true);                                 // silent = true
+}, 60000);
