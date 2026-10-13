@@ -38,6 +38,7 @@ tr:hover td { background-color: #f1f5f9; transition: background 0.2s ease; }
 .filter-toggle input[type="radio"]:checked + label { background: #4a90e2; color: white; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
 .deadline-badge { font-size: 1em; font-weight: 600; color: #fff; background: #f00; padding: 6px 5px; border-radius: 20px; border: 1px solid #f00; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
 .deadline-passed { color: #c0392b !important; background: #fadbd8 !important; border-color: #f5b7b1 !important; }
+.deadline-pending { color: #fff !important; background: #f39c12 !important; border-color: #f39c12 !important; }
 #adminBtn { position: fixed; top: 15px; right: 15px; text-align: center; cursor: pointer; z-index: 100; }
 #adminIconBox { background: #e74c3c; color: white; width: 45px; height: 45px; border-radius: 50%; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.2); margin: 0 auto; transition: all 0.3s ease; }
 #adminIcon { font-size: 1.75em; }
