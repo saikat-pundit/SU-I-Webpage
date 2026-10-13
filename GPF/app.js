@@ -332,7 +332,7 @@ function toggleForm() {
     }
 }
 
-function showFormatImage() { showImageModal("https://freeimghost.com/images/2026/02/23/GPF_FORMAT_page-0001.jpg"); }
+function showFormatImage() { showImageModal("https://freeimghost.com/images/2026/10/12/GPF_FORMAT_page-0001.jpg"); }
 
 function calcNetPay() {
     const revised = parseFloat(document.getElementById('revisedGpf').value);
