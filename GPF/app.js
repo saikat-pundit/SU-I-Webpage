@@ -200,7 +200,7 @@ function renderDashboard(csvText) {
 
 // ── Rest of your code (unchanged) ──
 function downloadFormatImage() {
-    const url = "https://freeimghost.com/images/2026/02/23/GPF_FORMAT_page-0001.jpg";
+    const url = "https://freeimghost.com/images/2026/10/12/GPF_FORMAT_page-0001.jpg";
     const a = document.createElement('a');
     a.href = url;
     a.download = "GPF_FORMAT.jpg";
