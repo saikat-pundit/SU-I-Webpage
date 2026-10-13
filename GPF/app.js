@@ -9,6 +9,8 @@ let presentGpfNum = 0;
 let webpImageBase64 = "";
 let isCaptchaVerified = false;
 const ID_PATTERN = /^[A-Z]{4}\d{4}$/;
+const OPEN_DATE  = new Date("2027-02-02T00:00:00");
+const CLOSE_DATE = new Date("2027-03-10T23:59:59");
 const SHEET_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTBuDewVgTDoc_zaWYQyaWKpBt0RwtFPhnBrpqr1v6Y5wfAmPpEYvTsaWd64bsHhH68iYNtLMSRpOQ0/pub?gid=0&single=true&output=csv';
 const GIST_CSV = 'https://gist.githubusercontent.com/saikat-pundit/84be0fa2560bd68f34718decaa19c781/raw/GPF.CSV';
 const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxfy_FyoIoT6iryc1LUTOoW489X3xV8ps2AsqqdiXj8mtuQYh-jeSf7_BSJLDN_QfVSEw/exec';
@@ -46,7 +48,7 @@ function enlargeImage(url) { showImageModal(url); }
 // ── Load sheet CSV (with proxy fallback) then dashboard ──
 window.onload = function() {
     document.getElementById('searchValue').value = '';
-
+    applyDateWindow();
     var SHEET_PROXIES = [
     SHEET_CSV,
     "https://corsproxy.io/?" + encodeURIComponent(SHEET_CSV),
@@ -317,18 +319,44 @@ function toggleForm() {
     const opt = document.querySelector('input[name="gpfOpt"]:checked').value;
     document.getElementById('gpfTable').style.display = opt === 'Yes' ? 'block' : 'none';
     document.getElementById('submitContainer').style.display = 'flex';
+    applyDateWindow();
+}
+function applyDateWindow() {
+    const btn   = document.getElementById('submitBtn');
+    const badge = document.getElementById('deadlineText');
+    const now   = new Date();
+    btn.disabled = false;
+    btn.innerText = "Submit";
+    btn.style.background = "";
+    btn.style.color = "";
+    btn.style.animation = "";
+    btn.style.pointerEvents = "";
+    badge.classList.remove('deadline-passed');
+    badge.style.background = "";
+    badge.style.borderColor = "";
+    badge.style.color = "";
 
-    const deadline = new Date("2027-03-10T23:59:59");
-    if (new Date() > deadline) {
-        const btn = document.getElementById('submitBtn');
-        const badge = document.getElementById('deadlineText');
+    if (now < OPEN_DATE) {
+        btn.disabled = true;
+        btn.style.background = "#a0c4eb";
+        btn.style.color = "#fff";
+        btn.style.animation = "none";
+        btn.style.pointerEvents = "none";
+        badge.innerHTML = '<i class="fa fa-hourglass-start"></i> Opening from 02 Feb 2027';
+        badge.style.background = "#f39c12";
+        badge.style.borderColor = "#f39c12";
+        badge.style.color = "#fff";
+    } else if (now > CLOSE_DATE) {
         btn.disabled = true;
         btn.innerText = "Closed";
         btn.style.background = "#e2e8f0";
         btn.style.color = "#a0aec0";
         btn.style.animation = "none";
-        badge.innerHTML = '<i class="fa fa-times-circle"></i> Last Date Passed';
+        btn.style.pointerEvents = "none";
+        badge.innerHTML = '<i class="fa fa-times-circle"></i> Closed on 10 Mar 2027';
         badge.classList.add('deadline-passed');
+    } else {
+        badge.innerHTML = '<i class="fa fa-clock-o"></i>: 10 Mar 2027';
     }
 }
 
@@ -378,6 +406,15 @@ function compressImage(event) {
 }
 
 function submitForm() {
+    const now = new Date();
+    if (now < OPEN_DATE) {
+        alert("Applications open from 02 Feb 2027.");
+        return;
+    }
+    if (now > CLOSE_DATE) {
+        alert("Submission closed on 10 Mar 2027.");
+        return;
+    }
     if (!isCaptchaVerified) {
         alert("Please verify that you are not a robot by checking the reCAPTCHA box.");
         return;
