@@ -1,4 +1,4 @@
-    :root{--ink:#1f2937;--paper:#f6f5f1;--line:#000;--accent:#c2553b;--accent-dark:#9c3f29;--swatch-border:#000;--deep-blue:#1e3a8a}
+    :root{--ink:#1f2937;--paper:#f6f5f1;--line:#000;--accent:#c2553b;--accent-dark:#9c3f29;--swatch-border:#000;--deep-blue:#ff8300}
     *{box-sizing:border-box}
     body{margin:0;background:var(--paper);color:var(--ink);font-family:"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;line-height:1.5;font-size:16px}
     .wrap{max-width:900px;margin:0 auto}
