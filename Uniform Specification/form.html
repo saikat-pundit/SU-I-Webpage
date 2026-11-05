@@ -1,0 +1,37 @@
+<div class="wrap">
+    <h1>
+    <div class="title-video-circle">
+      <video src="https://cdnl.iconscout.com/lottie/premium/preview-watermark/school-boy-animation-gif-download-12291118.mp4" autoplay loop muted playsinline></video>
+    </div>
+    School Uniform Specification
+  </h1>
+  <div id="globalTabs">
+    <button type="button" data-view="form" data-active="true"><i class="fa-solid fa-pen-to-square"></i>Form</button>
+    <button type="button" data-view="dashboard"><i class="fa-solid fa-table"></i>Dashboard</button>
+  </div>
+  <div id="viewForm">
+    <div class="field">
+      <label for="schoolSelect">Select School</label>
+      <select id="schoolSelect"><option value="">-- loading schools --</option></select>
+    </div>
+    <div id="tabsContainer"></div>
+    <div id="formContent"></div>
+        <button id="submitBtn" class="btn btn-primary" type="button"><i class="fa-solid fa-paper-plane btn-icon"></i>Submit</button>
+    <div id="formErrors" style="display:none; color:#b00; font-weight:700; margin-top:14px; text-align:center; font-size:1.05rem; line-height:1.6;"></div>
+  </div>
+  <div id="viewDashboard" style="display:none">
+    <div id="dashboardWrap"></div>
+  </div>
+</div>
+
+<div id="modalBackdrop"></div>
+<div id="confirmModal"></div>
+
+<div id="overlay">
+  <div class="spinner"><span id="countdown">30</span></div>
+  <div class="overlay-text">Submitting…</div>
+</div>
+<div id="loadOverlay">
+  <div class="spinner" style="animation:spin 1s linear infinite"></div>
+  <div class="overlay-text">Loading...</div>
+</div>
