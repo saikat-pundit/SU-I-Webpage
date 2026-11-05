@@ -1,6 +1,7 @@
 const cd = [
+    { i: 'fas fa-tshirt', t: 'Uniform Spefication', d: 'Report Uniform Requirements for Boys and Girls ', u: 'https://sadarurban1circlepurbaburdwan.blogspot.com/2026/11/uniform-specification.html', b: 'Reporting Form', n: 1 },
   	{ i: 'fas fa-shoe-prints', t: 'Shoe Requisition', d: 'Submit shoe requisition for students of PP, II & IV for the year 2027.', u: 'https://sadarurban1circlepurbaburdwan.blogspot.com/2025/07/Shoe.html', b: 'Requisition Form', n: 1 },
-    { i: 'fa-solid fa-pen-nib', t: 'Essay Competiton 2026', d: 'Submit the best essay on "What will my school be like?"', u: 'https://sadarurban1circlepurbaburdwan.blogspot.com/2026/08/EssayCompetition.html', b: 'Upload Essay', n: 1 },
+    { i: 'fa-solid fa-pen-nib', t: 'Essay Competiton 2026', d: 'Submit the best essay on "What will my school be like?"', u: 'https://sadarurban1circlepurbaburdwan.blogspot.com/2026/08/EssayCompetition.html', b: 'Upload Essay', },
     { i: 'fas fa-chalkboard-teacher', t: 'Intra-circle Transfer', d: 'Apply online for your preferred deficit schools as part of the intra-circle rationalization.', u: 'https://sadarurban1circlepurbaburdwan.blogspot.com/2026/08/intra-circle.html', b: 'Fill the form', },
     { i: 'fa fa-address-book', t: 'Library Rooms & Book Availablity', d: 'Report the infrastructure related to Library rooms and book availability', u: 'https://sadarurban1circlepurbaburdwan.blogspot.com/2026/07/library.html', b: 'Fill the form' },
     { i: 'fa fa-address-book', t: 'Infrastructure Reporting', d: 'Report the details of infrastructure available in schools', u: 'https://sadarurban1circlepurbaburdwan.blogspot.com/2026/06/infra.html', b: 'Fill the form' },
