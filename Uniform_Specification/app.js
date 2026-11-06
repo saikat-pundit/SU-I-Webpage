@@ -355,22 +355,37 @@ globalTabs.addEventListener('click', function(e) {
     renderTabContent(tabNames[0]);
   }
 
-  function renderTabContent(tabName) {
+    function renderTabContent(tabName) {
     formContent.innerHTML = '';
+    const heading = document.createElement('h2');
+    heading.style.fontSize = '1.1rem';
+    heading.style.fontWeight = '700';
+    heading.style.margin = '0 0 14px 0';
+    heading.style.color = '#111';
     if (tabName === 'Boys' || tabName === 'Girls') {
       const bar = document.createElement('div');
       bar.id = 'subTabBar';
       const gKey = tabName.toLowerCase();
-      const st = state[currentSchool[csvHeaders[0]]];
+      const st = state[currentSchool[csvHeaders[0]]];      
       ['Set 1', 'Set 2'].forEach((lbl, i) => {
         const getter = () => isSetComplete(st[gKey][lbl]);
-        bar.appendChild(makeTabBtn(lbl, () => renderSetFields(tabName, lbl), i === 0, getter));
+        bar.appendChild(makeTabBtn(lbl, () => {
+          // Update heading when sub-tab is clicked
+          heading.textContent = "Please enter uniform specification for " + tabName + "' " + lbl;
+          renderSetFields(tabName, lbl);
+        }, i === 0, getter));
       });
+      heading.textContent = "Please enter uniform specification for " + tabName + "' Set-1";      
       formContent.appendChild(bar);
+      formContent.appendChild(heading);
       renderSetFields(tabName, 'Set 1');
+      
     } else if (tabName === 'Dupatta') {
+      heading.textContent = "Please enter uniform specification for Dupatta";
+      formContent.appendChild(heading);
       renderDupattaFields();
     }
+    
     updateSubmitState();
   }
 
