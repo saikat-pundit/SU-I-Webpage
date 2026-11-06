@@ -49,7 +49,8 @@
     { name: 'MAROON', hex: '#800000' },
     { name: 'NAVY BLUE', hex: '#000080' },
     { name: 'RED', hex: '#c24444' },
-    { name: 'WHITE', hex: '#FFFFFF' }
+    { name: 'WHITE', hex: '#FFFFFF' },
+	{ name: 'GREEN', hex: '#008055' },
   ];
   const GIRLS_UPPER = ['FULL SHIRT', 'HALF SHIRT', 'KAMEEZ'];
   const GIRLS_UPPER_COLOR = [
