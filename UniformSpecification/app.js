@@ -196,7 +196,7 @@ function showView(viewName) {
     const trh = document.createElement('tr');
     visibleIdx.forEach(i => {
       const th = document.createElement('th');
-      th.textContent = dashHeaders[i];
+      th.textContent = dashHeaders[i].replace(/UPPER PART /gi, '');
       trh.appendChild(th);
     });
     thead.appendChild(trh);
